@@ -347,6 +347,9 @@ public final class CrashReportDataFactory {
                 crashReportData.put(USER_IP, ReportUtils.getLocalIpAddress());
             }
 
+            crashReportData.put(type, "acra"); // for ElasticSearch
+
+
         } catch (RuntimeException e) {
             Log.e(LOG_TAG, "Error while retrieving crash data", e);
         } catch (FileNotFoundException e) {

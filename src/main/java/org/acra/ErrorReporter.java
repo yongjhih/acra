@@ -24,6 +24,7 @@ import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 
 import org.acra.annotation.ReportsCrashes;
 import org.acra.collector.Compatibility;
@@ -51,6 +52,7 @@ import android.content.SharedPreferences;
 import android.content.pm.PackageInfo;
 import android.os.Bundle;
 import android.os.Looper;
+import android.text.TextUtils;
 import android.text.format.Time;
 import android.util.Log;
 import android.widget.Toast;
@@ -235,7 +237,7 @@ public class ErrorReporter implements Thread.UncaughtExceptionHandler {
      */
     @Deprecated
     public void addCustomData(String key, String value) {
-        crashReportDataFactory.putCustomData(key, value);
+        putCustomData(key, value);
     }
 
     /**
@@ -1003,9 +1005,47 @@ public class ErrorReporter implements Thread.UncaughtExceptionHandler {
 
         // If formUri is set, instantiate a sender for a generic HTTP POST form
         // with default mapping.
-        if (conf.formUri() != null && !"".equals(conf.formUri())) {
-            setReportSender(new HttpSender(ACRA.getConfig().httpMethod(), ACRA.getConfig().reportType(), null));
-            return;
+        String formUri = conf.formUri();
+        List<String> forms = Arrays.asList(conf.forms());
+
+        if (!TextUtils.isEmpty(formUri)) {
+            addReportSender(new HttpSender(conf.httpMethod(), conf.reportType(), null));
+        }
+
+        if (forms != null) {
+            for (String form : forms) {
+                org.acra.sender.HttpSender.Method method = conf.httpMethod();
+                org.acra.sender.HttpSender.Type type = conf.reportType();
+                String uri = null;
+                Map<ReportField, String> mapping = null;
+
+                if (TextUtils.isEmpty(form)) continue;
+
+                String[] formSegments = form.split(" ");
+
+                switch (formSegments.length) {
+                    case 3:
+                        String m = formSegments[2];
+                        if ("post".equalsIgnoreCase(m)) {
+                            method = org.acra.sender.HttpSender.Method.POST;
+                        } else if ("put".equalsIgnoreCase(m)) {
+                            method = org.acra.sender.HttpSender.Method.PUT;
+                        }
+                    case 2:
+                        String t = formSegments[1];
+                        if ("application/x-www-form-urlencoded".equalsIgnoreCase(t)) {
+                            type = org.acra.sender.HttpSender.Type.FORM;
+                        } else if ("application/json".equalsIgnoreCase(t)) {
+                            type = org.acra.sender.HttpSender.Type.JSON;
+                        }
+                    case 1:
+                        uri = formSegments[0];
+                }
+
+                if (uri == null) continue;
+
+                addReportSender(new HttpSender(method, type, uri, mapping));
+            }
         }
 
         // The default behavior is to use the formKey for a Google Docs Form. If

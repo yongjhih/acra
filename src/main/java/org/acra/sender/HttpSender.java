@@ -239,7 +239,9 @@ public class HttpSender implements ReportSender {
             case POST:
                 break;
             case PUT:
-                reportUrl = new URL(reportUrl.toString() + '/' + report.getProperty(ReportField.REPORT_ID));
+                if (ACRA.getConfig().formUriWithReportId()) {
+                    reportUrl = new URL(reportUrl.toString() + '/' + report.getProperty(ReportField.REPORT_ID));
+                }
                 break;
             default:
                 throw new UnsupportedOperationException("Unknown method: " + mMethod.name());

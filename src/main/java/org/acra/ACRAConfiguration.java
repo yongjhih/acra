@@ -725,6 +725,38 @@ public class ACRAConfiguration implements ReportsCrashes {
         return DEFAULT_STRING_VALUE;
     }
 
+    private String[] mForms;
+
+    // TODO setter
+    @Override
+    public String[] forms() {
+        if (mForms != null) {
+            return mForms;
+        }
+
+        if (mReportsCrashes != null) {
+            return mReportsCrashes.forms();
+        }
+
+        return null;
+    }
+
+    private Boolean mFormUriWithReportId;
+
+    // TODO setter
+    @Override
+    public boolean formUriWithReportId() {
+        if (mFormUriWithReportId != null) {
+            return mFormUriWithReportId;
+        }
+
+        if (mReportsCrashes != null) {
+            return mReportsCrashes.formUriWithReportId();
+        }
+
+        return true;
+    }
+
     @Override
     public String formUri() {
         if (mFormUri != null) {

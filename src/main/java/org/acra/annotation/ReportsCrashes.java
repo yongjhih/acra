@@ -49,9 +49,19 @@ import android.preference.PreferenceManager;
 public @interface ReportsCrashes {
 
     /**
+     * @return "{formUri} {type} {method}"
+     */
+    String[] forms() default {};
+
+    /**
+     * @return Adjust URL depending on method such as PUT
+     */
+    boolean formUriWithReportId() default true;
+
+    /**
      * @return The id of the Google Doc form.
      */
-    String formKey();
+    String formKey() default "";
 
     /**
      * The Uri of your own server-side script that will receive reports. This is

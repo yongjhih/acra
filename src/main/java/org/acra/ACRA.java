@@ -307,7 +307,7 @@ public class ACRA {
         if(app != null) {
             return new ACRAConfiguration(app.getClass().getAnnotation(ReportsCrashes.class));
         } else {
-            return new ACRAConfiguration(null);
+            return new ACRAConfiguration();
         }
     }
 
