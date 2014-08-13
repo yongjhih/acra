@@ -92,6 +92,10 @@ public final class CrashReportDataFactory {
         return customParameters.put(key, value);
     }
 
+    public String putCustomData(String key, Object value) {
+        return putCustomData(key, (value == null) ? "null" : value.toString());
+    }
+
     /**
      * Removes a key/value pair from the custom data field.
      * 

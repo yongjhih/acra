@@ -265,6 +265,10 @@ public class ErrorReporter implements Thread.UncaughtExceptionHandler {
         return crashReportDataFactory.putCustomData(key, value);
     }
 
+    public String putCustomData(String key, Object value) {
+        return putCustomData(key, (value == null) ? "null" : value.toString());
+    }
+
     /**
      * <p>
      * Use this method to perform additional initialization before the
